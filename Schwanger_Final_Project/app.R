@@ -8,25 +8,26 @@ library(tigris)
 load("fenAppData.RData")
 
 ui <- fluidPage(
-  titlePanel("Lake County Fen & Wetland Explorer"),
-  leafletOutput("map", height = "80vh"))
+  titlePanel("Eagle County Fen & Wetland Explorer"),
+  h5("This map compares three different datasets that map wetlands and potential fens in Eagle County, Colorado"), 
+  tags$ul(
+    tags$li(strong("USFWS – Wetlands:"), "National Wetlands Inventory polygons."),
+    tags$li(strong("CDOT – Potential Fens:"), "potential fens mapped by the Colorado Department of Transportation along transportation corridors."),
+    tags$li(strong("CNHP – Potential Fens:"), "potential fens mapped by the Colorado Natural Heritage Program.")),
+  p("The limited overlap between layers highlights how agency missions and survey designs shape where wetlands and fens have been mapped so far."),
+  leafletOutput("map", height = "75vh"))
 
 server <- function(input, output, session) {
   
   output$map <- renderLeaflet({
    
-     bb <- st_bbox(lake_eagle)
-     center_lon <- as.numeric((bb["xmin"] + bb["xmax"]) / 2)
-     center_lat <- as.numeric((bb["ymin"] + bb["ymax"]) / 2)
-     
     leaflet() %>%
       addProviderTiles("Esri.WorldTopoMap") %>%
       addPolygons(
-        data = lake_co,
+        data = eagle_co,
         fill = FALSE,
         weight = 2,
-        color = "black",
-        group = "Counties"
+        color = "black"
       ) %>%
       addPolygons(
         data = usfws_co_wetlands_crop,
@@ -47,13 +48,22 @@ server <- function(input, output, session) {
         weight = 1,
         color = "darkgreen",
         fillOpacity = 0.6,
-        group = "CNHP fen polygons"
+        group = "CNHP - Potential Fens"
       ) %>%
-      addLayersControl(
-        overlayGroups = c("Counties", "USFWS Mapped Wetlands", "CDOT mapped fens", "CNHP fen polygons"),
-        options = layersControlOptions(collapsed = FALSE)
+      addLegend(
+        position = "topright",
+        title    = "Data Source",
+        colors   = c("purple", "orange", "darkgreen"),
+        labels   = c("USFWS - Wetlands",
+                     "CDOT - Potential Fens",
+                     "CNHP - Potential Fens"),
+        opacity  = 1
       ) %>%
-      setView(lng = center_lon, lat = center_lat, zoom = 9.5)
+    addLayersControl(
+      overlayGroups = c("USFWS - Wetlands",
+                        "CDOT - Potential Fens",
+                        "CNHP - Potential Fens"),
+      options = layersControlOptions(collapsed = FALSE))
   })
 }
 

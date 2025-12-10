@@ -8,10 +8,12 @@ usfws_co_wetlands <- st_read("/Users/lynetteschwanger/Desktop/Env-Data-Sci_2025/
 
 cdot_fens <- st_read("/Users/lynetteschwanger/Desktop/Env-Data-Sci_2025/Lynette-Schwanger_Final-Project/data/Potential_Fen_Wetlands.geojson")
 
+cnhp_fens <- st_read("https://cnhp.colostate.edu/arcgis/rest/services/Wetland_Inv/Fen_Mapping/MapServer/0/query?where=1=1&outFields=*&resultRecordCount=12000&f=geojson")
+
 co_counties <- counties(state = "CO")
 
-lake_co <- co_counties %>% 
-  filter(NAME == "Lake")
+eagle_co <- co_counties %>% 
+  filter(NAME == "Eagle")
 
 target_crs <- "EPSG:4326"
 
@@ -19,40 +21,16 @@ usfws_co_wetlands <- st_transform(usfws_co_wetlands, target_crs)
 
 cdot_fens <- st_transform(cdot_fens,target_crs)  
 
-lake_co <- st_transform(lake_co,target_crs)
-
-co_counties <- co_counties %>%
-  st_as_sf() %>%
-  st_transform(target_crs)
-
-bb <- st_bbox(lake_co)
-
-bbox_string <- paste(
-  bb["xmin"], bb["ymin"], bb["xmax"], bb["ymax"],
-  sep = ","
-)
-
-cnhp_url <- paste0(
-  "https://cnhp.colostate.edu/arcgis/rest/services/Wetland_Inv/Fen_Mapping/MapServer/0/query?",
-  "geometry=", bbox_string,
-  "&geometryType=esriGeometryEnvelope",
-  "&inSR=4326",
-  "&spatialRel=esriSpatialRelIntersects",
-  "&where=1=1",
-  "&outFields=*",
-  "&f=geojson"
-)
-
-cnhp_fens <- st_read(cnhp_url)
-
 cnhp_fens <- st_transform(cnhp_fens, target_crs)
 
-usfws_co_wetlands_crop <- st_intersection(usfws_co_wetlands, lake_co)
+eagle_co <- st_transform(eagle_co,target_crs)
 
-cdot_fens_crop <- st_intersection(cdot_fens, lake_co)
+usfws_co_wetlands_crop <- st_intersection(usfws_co_wetlands, eagle_co)
 
-cnhp_fens_crop <- st_intersection(cnhp_fens, lake_co)
+cdot_fens_crop <- st_intersection(cdot_fens, eagle_co)
 
-save(usfws_co_wetlands_crop, cdot_fens_crop, cnhp_fens_crop, lake_co, file = "/Users/lynetteschwanger/Desktop/Env-Data-Sci_2025/Lynette-Schwanger_Final-Project/Schwanger_Final_Project/fenAppData.RData")
+cnhp_fens_crop <- st_intersection(cnhp_fens, eagle_co)
+
+save(usfws_co_wetlands_crop, cdot_fens_crop, cnhp_fens_crop, eagle_co, file = "/Users/lynetteschwanger/Desktop/Env-Data-Sci_2025/Lynette-Schwanger_Final-Project/Schwanger_Final_Project/fenAppData.RData")
   
 

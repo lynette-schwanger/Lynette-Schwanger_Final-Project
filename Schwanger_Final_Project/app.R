@@ -9,39 +9,51 @@ load("fenAppData.RData")
 
 ui <- fluidPage(
   titlePanel("Lake & Eagle County Fen & Wetland Explorer"),
-  leafletOutput("map", height = "80vh")
-)
+  leafletOutput("map", height = "80vh"))
 
 server <- function(input, output, session) {
   
   output$map <- renderLeaflet({
-    leaflet() |>
-      addProviderTiles("Esri.WorldTopoMap") |>
+   
+     bb <- st_bbox(lake_eagle)
+     center_lon <- as.numeric((bb["xmin"] + bb["xmax"]) / 2)
+     center_lat <- as.numeric((bb["ymin"] + bb["ymax"]) / 2)
+     
+    leaflet() %>%
+      addProviderTiles("Esri.WorldTopoMap") %>%
       addPolygons(
         data = lake_eagle,
         fill = FALSE,
         weight = 2,
         color = "black",
         group = "Counties"
-      ) |>
+      ) %>%
       addPolygons(
         data = usfws_co_wetlands_crop,
         weight = 1,
-        color = "blue",
+        color = "purple",
         fillOpacity = 0.4,
-        group = "Wetlands"
-      ) |>
+        group = "USFWS - Wetlands"
+      ) %>%
       addPolygons(
         data = cdot_fens_crop,
         weight = 1,
-        color = "green",
+        color = "orange",
         fillOpacity = 0.7,
-        group = "Potential fens"
-      ) |>
+        group = "CDOT - Potential Fens"
+      ) %>%
+      addPolygons(
+        data = cnhp_fens_crop,
+        weight = 1,
+        color = "darkgreen",
+        fillOpacity = 0.6,
+        group = "CNHP fen polygons"
+      ) %>%
       addLayersControl(
-        overlayGroups = c("Counties", "Wetlands", "Potential fens"),
+        overlayGroups = c("Counties", "USFWS Mapped Wetlands", "CDOT mapped fens", "CNHP fen polygons"),
         options = layersControlOptions(collapsed = FALSE)
-      )
+      ) %>%
+      setView(lng = center_lon, lat = center_lat, zoom = 9.5)
   })
 }
 

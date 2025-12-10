@@ -8,7 +8,7 @@ library(tigris)
 load("fenAppData.RData")
 
 ui <- fluidPage(
-  titlePanel("Lake & Eagle County Fen & Wetland Explorer"),
+  titlePanel("Lake County Fen & Wetland Explorer"),
   leafletOutput("map", height = "80vh"))
 
 server <- function(input, output, session) {
@@ -22,7 +22,7 @@ server <- function(input, output, session) {
     leaflet() %>%
       addProviderTiles("Esri.WorldTopoMap") %>%
       addPolygons(
-        data = lake_eagle,
+        data = lake_co,
         fill = FALSE,
         weight = 2,
         color = "black",

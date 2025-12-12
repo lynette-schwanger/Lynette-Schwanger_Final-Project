@@ -44,7 +44,13 @@ server <- function(input, output, session) {
         weight = 1,
         color = "darkgreen",
         fillOpacity = 1,
-        group = "CNHP - Potential Fens") %>%
+        group = "CNHP - Potential Fens",
+        popup = ~paste0(
+          "<b>Fen status:</b> ", FEN_STATUS, "<br>",
+          "<b>Source:</b> ", Source, "<br>",
+          "<b>Acres:</b> ", round(Acres, 1)
+        )
+      ) %>%
       addLegend(
         position = "topright",
         title    = "Data Source",
@@ -63,7 +69,7 @@ server <- function(input, output, session) {
         color = "midnightblue",
         weight = .6,
         fillOpacity = .3)
-  })
+  }
 }
 
 # Run the application 

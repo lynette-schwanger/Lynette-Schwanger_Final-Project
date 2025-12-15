@@ -5,7 +5,7 @@ library(sf)
 library(dplyr)
 library(tigris)
 
-load("fenAppData.RData")
+load("data/fenAppData.RData")
 
 ui <- fluidPage(
   titlePanel("Eagle County Fen & Wetland Explorer"),

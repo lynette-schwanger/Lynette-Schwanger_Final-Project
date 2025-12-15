@@ -9,7 +9,7 @@ load("data/fenAppData.RData")
 
 ui <- fluidPage(
   titlePanel("Eagle County Fen & Wetland Explorer"),
-  h5("This map compares three different datasets that map wetlands and potential fens in Eagle County, Colorado"), 
+  h5("This map compares three different datasets that map wetlands and potential fens in Eagle County, Colorado. You can click on individual polygons for acerage and additional data."), 
   tags$ul(
     tags$li(strong("USFWS – Wetlands:"), "National Wetlands Inventory polygons."),
     tags$li(strong("CDOT – Potential Fens:"), "potential fens mapped by the Colorado Department of Transportation along transportation corridors."),
